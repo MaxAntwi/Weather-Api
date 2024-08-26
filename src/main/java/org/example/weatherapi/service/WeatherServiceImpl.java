@@ -35,6 +35,7 @@ public class WeatherServiceImpl implements WeatherService{
 
     @Override
     public WeatherResponse getWeatherByCountryAndCity(WeatherRequest weatherRequest) {
+        String period = weatherRequest.getPeriod().isEmpty() ? "today" : weatherRequest.getPeriod();
         if (weatherRequest.getCity().isEmpty() || weatherRequest.getCountry().isEmpty()) {
             throw new BadFormatRequestException("Bad request check country or city", HttpStatus.BAD_REQUEST.value());
         }
@@ -42,7 +43,7 @@ public class WeatherServiceImpl implements WeatherService{
             String city = weatherRequest.getCity();
             String country = weatherRequest.getCountry();
             return webClientBuilder.build().get()
-                    .uri("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city},{country}?key={apiKey}", city, country, apiKey)
+                    .uri("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city},{country}/{period}?key={apiKey}", city, country, period, apiKey)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
                         return clientResponse.bodyToMono(String.class)

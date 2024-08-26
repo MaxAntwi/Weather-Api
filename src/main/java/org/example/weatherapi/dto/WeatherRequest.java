@@ -15,4 +15,5 @@ public class WeatherRequest {
     private String country;
     private Double longitude;
     private Double latitude;
+    private String period = "";
 }
