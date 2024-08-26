@@ -7,6 +7,7 @@ import org.example.weatherapi.dto.WeatherResponse;
 import org.example.weatherapi.exception.BadFormatRequestException;
 import org.example.weatherapi.exception.WeatherApiError;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -21,19 +22,7 @@ public class WeatherServiceImpl implements WeatherService{
     private final String apiKey = System.getenv("API_KEY");
 
     @Override
-    public WeatherResponse getWeather(WeatherRequest weatherRequest) {
-        try {
-            return webClientBuilder.build().get()
-                    .uri("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/London,UK?key={apiKey}",apiKey)
-                    .retrieve()
-                    .bodyToMono(WeatherResponse.class).block();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
+    @Cacheable(value = "weather", key = "#weatherRequest.city + '-' + #weatherRequest.country + '-' + #weatherRequest.period")
     public WeatherResponse getWeatherByCountryAndCity(WeatherRequest weatherRequest) {
         String period = weatherRequest.getPeriod().isEmpty() ? "today" : weatherRequest.getPeriod();
         if (weatherRequest.getCity().isEmpty() || weatherRequest.getCountry().isEmpty()) {

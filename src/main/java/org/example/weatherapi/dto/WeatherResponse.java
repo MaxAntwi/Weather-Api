@@ -1,17 +1,20 @@
 package org.example.weatherapi.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-public class WeatherResponse {
+@JsonSerialize
+public class WeatherResponse implements Serializable {
     private Long queryCost;
     private Long latitude;
     private Long longitude;
