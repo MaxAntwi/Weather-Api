@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.weatherapi.dto.WeatherRequest;
 import org.example.weatherapi.dto.WeatherResponse;
+import org.example.weatherapi.exception.BadFormatRequestException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -31,7 +33,7 @@ public class WeatherServiceImpl implements WeatherService{
     @Override
     public WeatherResponse getWeatherByCountryAndCity(WeatherRequest weatherRequest) {
         if (weatherRequest.getCity().isEmpty() || weatherRequest.getCountry().isEmpty()) {
-            return null;
+            throw new BadFormatRequestException("Bad request check country or city", HttpStatus.BAD_REQUEST.value());
         }
         try {
             String city = weatherRequest.getCity();
