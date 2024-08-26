@@ -16,6 +16,7 @@ public class WeatherController {
     @GetMapping
     public WeatherResponse getWeather() {
         WeatherRequest r = new WeatherRequest();
-        return weatherService.getWeather(r);
+        return weatherService.getWeather(r);\
+
     }
 }
