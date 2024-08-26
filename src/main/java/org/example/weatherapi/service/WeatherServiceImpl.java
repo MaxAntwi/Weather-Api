@@ -6,7 +6,6 @@ import org.example.weatherapi.dto.WeatherRequest;
 import org.example.weatherapi.dto.WeatherResponse;
 import org.example.weatherapi.exception.BadFormatRequestException;
 import org.example.weatherapi.exception.WeatherApiError;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;

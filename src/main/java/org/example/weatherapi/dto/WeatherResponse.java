@@ -22,5 +22,6 @@ public class WeatherResponse implements Serializable {
     private String address;
     private String timezone;
     private String description;
+    private String status;
     private List<Days> days;
 }
