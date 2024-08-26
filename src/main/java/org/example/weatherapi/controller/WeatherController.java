@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class WeatherController {
     private final WeatherService weatherService;
-    @GetMapping
-    public WeatherResponse getWeather() {
-        WeatherRequest r = new WeatherRequest();
-        return weatherService.getWeather(r);\
-
+    @GetMapping("country")
+    public WeatherResponse getWeatherByCountry(WeatherRequest weatherRequest) {
+        return weatherService.getWeatherByCountryAndCity(weatherRequest);
     }
 }
