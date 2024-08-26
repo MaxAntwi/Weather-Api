@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.weatherapi.dto.WeatherRequest;
 import org.example.weatherapi.dto.WeatherResponse;
 import org.example.weatherapi.exception.BadFormatRequestException;
+import org.example.weatherapi.exception.WeatherApiError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -41,6 +44,14 @@ public class WeatherServiceImpl implements WeatherService{
             return webClientBuilder.build().get()
                     .uri("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city},{country}?key={apiKey}", city, country, apiKey)
                     .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
+                        return clientResponse.bodyToMono(String.class)
+                                .flatMap(error -> Mono.error(new BadFormatRequestException("Bad request check country or city", HttpStatus.BAD_REQUEST.value())));
+                    })
+                    .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> {
+                        return clientResponse.bodyToMono(String.class)
+                                .flatMap(error -> Mono.error(new WeatherApiError("Server is down try Again Later", clientResponse.statusCode().value())));
+                    })
                     .bodyToMono(WeatherResponse.class).block();
         } catch (Exception e) {
             log.error(e.getMessage());
